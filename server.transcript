@@ -1,0 +1,7 @@
+> java SServer
+Server started: ServerSocket[addr=0.0.0.0/0.0.0.0,localport=55555]
+First player connected: Socket[addr=/127.0.0.1,port=53909,localport=55555]
+Second player connected: Socket[addr=/127.0.0.1,port=53910,localport=55555]
+First player connected: Socket[addr=/127.0.0.1,port=53916,localport=55555]
+Second player connected: Socket[addr=/127.0.0.1,port=53917,localport=55555]
+^C
