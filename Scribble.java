@@ -116,7 +116,7 @@ class Scribble implements Runnable {
        is in dict
      */
     static boolean isInDictionary(String word) {
-      return Arrays.asList(dict).contains(word);
+      return Arrays.asList(dict).contains(word.toUpperCase());
     }// isInDictionary method
 
     /* convert the Scribble board to a string
