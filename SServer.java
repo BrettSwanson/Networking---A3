@@ -25,7 +25,6 @@ public class SServer {
     */
     public static void main(String[] args) {
 
-        // To be completed
 
     }// main method
 

@@ -90,16 +90,20 @@ class Scribble implements Runnable {
        sorted in alphabetical order within dict.
      */
      static void loadDictionary() {
-
+         dict = new String[276643];
      try {
          File file = new File("dict.txt");
          FileReader fileReader =  new FileReader(file);
          BufferedReader bufferedReader = new BufferedReader(fileReader);
          String line;
+         String prevLine = "";
          int lineNumber = 0;
          while ((line = bufferedReader.readLine()) != null) {
-             dict[lineNumber] = line;
-             lineNumber++;
+             if (!prevLine.equals(line)) {
+                 dict[lineNumber] = line;
+                 lineNumber++;
+             }
+             prevLine = line;
          }
          fileReader.close();
      } catch (IOException e) {
@@ -201,6 +205,8 @@ class Scribble implements Runnable {
       }
   }// BadWordPlacementException class
 
+    /* add your instance methods after this point */
+
     public char[][] buildBoard() {
       char[][] dummyBoard = new char[22][22];
       String stringBoard = " |0|1|2|3|4|5|6|7|8|9|" +
@@ -235,6 +241,6 @@ class Scribble implements Runnable {
        return dummyBoard;
     }
 
-  /* add your instance methods after this point */
+
 
 }// Scribble class
