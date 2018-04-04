@@ -202,7 +202,7 @@ class Scribble implements Runnable {
   }// BadWordPlacementException class
 
     public char[][] buildBoard() {
-      char[][] tempBoard = new char[22][22];
+      char[][] dummyBoard = new char[22][22];
       String stringBoard = " |0|1|2|3|4|5|6|7|8|9|" +
               "-+-+-+-+-+-+-+-+-+-+-+" +
               "A| | | | | | | | | | |" +
@@ -228,11 +228,11 @@ class Scribble implements Runnable {
       int curr = 0;
       for (int i = 0; i < 22; i++) {
           for(int j = 0; j < 22; j++) {
-              tempBoard[i][j] = stringBoard.charAt(curr);
+              dummyBoard[i][j] = stringBoard.charAt(curr);
               curr++;
           }
       }
-       return tempBoard;
+       return dummyBoard;
     }
 
   /* add your instance methods after this point */
