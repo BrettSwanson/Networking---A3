@@ -47,6 +47,7 @@ class Scribble implements Runnable {
      */
     Scribble(Socket clientSocket1, Socket clientSocket2, int seed) {
       loadDictionary();
+      board = buildBoard();
       this.player1 = clientSocket1;
       this.player2 = clientSocket2;
 
