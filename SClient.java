@@ -35,37 +35,7 @@ public class SClient {
           out.writeUTF(query);
           reply = in.readUTF();
           System.out.println(reply);
-          while(true) {
-              reply = in.readUTF();
-              System.out.println(reply);
-              if (reply.contains("GAME OVER")) {
-                break;
-              }
-              query = console.readLine();
-              while(!query.equalsIgnoreCase("A") || !query.equalsIgnoreCase("D") ) {
-                  query = console.readLine();
-              }
-              out.writeUTF(query);
-              reply = in.readUTF();
-              System.out.println(reply);
-              query = console.readLine();
-              boolean formatCorrect = false;
-              while(!formatCorrect) {
-                  if (((int)query.charAt(0) >= 65) && (int)query.charAt(0)<= 74 ) {
-                      if (((int)query.charAt(1) >= 48) && (int)query.charAt(1)<= 57) {
-                        formatCorrect = true;
-                      }
-                  }
-                  if (!formatCorrect) {
-                      query = console.readLine();
-                  }
-              }
-              out.writeUTF(query);
-              reply = in.readUTF();
-              System.out.println(reply);
-              query = console.readLine();
-              out.writeUTF(query.toUpperCase());
-          }
+          playGame();
           close();
       } catch(UnknownHostException e) {
           System.err.println("Unknown host: " + hostName);
@@ -111,8 +81,47 @@ public class SClient {
        namely in the provided traces.
      */
     static void playGame() {
-
-      // To be completed
+        try {
+            String reply, query;
+            while (true) {
+                reply = in.readUTF();
+                System.out.println(reply);
+                if (reply.contains("GAME OVER")) {
+                    break;
+                }
+                query = console.readLine();
+                while (!query.equalsIgnoreCase("A") || !query.equalsIgnoreCase("D")) {
+                    query = console.readLine();
+                }
+                out.writeUTF(query);
+                reply = in.readUTF();
+                System.out.println(reply);
+                query = console.readLine();
+                boolean formatCorrect = false;
+                while (!formatCorrect) {
+                    if (((int) query.charAt(0) >= 65) && (int) query.charAt(0) <= 74) {
+                        if (((int) query.charAt(1) >= 48) && (int) query.charAt(1) <= 57) {
+                            formatCorrect = true;
+                        }
+                    }
+                    if (!formatCorrect) {
+                        query = console.readLine();
+                    }
+                }
+                out.writeUTF(query);
+                reply = in.readUTF();
+                System.out.println(reply);
+                query = console.readLine();
+                out.writeUTF(query.toUpperCase());
+            }
+        } catch(UnknownHostException e) {
+            System.err.println("Unknown host: " + hostName);
+            System.exit(1);
+        } catch(IOException e) {
+            System.err.println("I/O error when connecting to" +
+                    hostName);
+            System.exit(1);
+        }
 
     }// playGame method
 
