@@ -66,7 +66,7 @@ public class SClient {
               query = console.readLine();
               out.writeUTF(query.toUpperCase());
           }
-          //close();
+          close();
       } catch(UnknownHostException e) {
           System.err.println("Unknown host: " + hostName);
           System.exit(1);
