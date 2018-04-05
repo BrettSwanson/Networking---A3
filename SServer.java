@@ -24,7 +24,29 @@ public class SServer {
        The output sent to the console by this method is described in the handout.
     */
     public static void main(String[] args) {
+    	try {
+            serverSocket = new ServerSocket(portNumber);
+	        System.out.println("Server started: " + serverSocket);
 
+	        while (true) {
+		        Socket clientSocketOne = serverSocket.accept();
+		        System.out.println("First player connected: " + 
+				   clientSocketOne);
+		        DataOutputStream out1 = new DataOutputStream(clientSocketOne.getOutputStream());
+		        out1.writeUTF("Welcome to Scribble!\n\nPlease wait for your opponent...");
+		        
+		        Socket clientSocketTwo = serverSocket.accept();
+		        System.out.println("Second player connected: " + 
+				   clientSocketTwo);
+		        DataOutputStream out2 = new DataOutputStream(clientSocketTwo.getOutputStream());
+		        out2.writeUTF("Welcome to Scribble!\n\nPlease wait for your opponent...");
+		        
+		        (new Thread( new Scribble(clientSocketOne, clientSocketTwo, seed))).start();
+	         }
+        } catch (IOException e) {
+            System.out.println("Server encountered an error. "
+            		            + "Shutting down...");
+        }
 
     }// main method
 
