@@ -62,8 +62,13 @@ class Scribble implements Runnable {
        namely in the provided traces.
      */
     public void run() {
-
-      // To be completed
+        try {
+            startGame();
+        } catch(EOFException e) {
+            System.out.println("Client died unexpectedly");
+        }catch (IOException e) {
+            System.out.println("blah blah blah " + e);
+        }
 
     }// run method
 
@@ -295,6 +300,10 @@ class Scribble implements Runnable {
           }
       }
        return dummyBoard;
+    }
+
+    public void startGame() throws IOException {
+        boolean first = rnd.nextBoolean();
     }
 
 
