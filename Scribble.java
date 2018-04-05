@@ -77,7 +77,23 @@ class Scribble implements Runnable {
        included in the handout.
      */
     String getGameState(int player) {
-
+    	String boardString = "";
+    	for (int i = 0; i < board.length; i++){ 
+    		for (int j = 0; j < board[i].length; j++){
+    			boardString += board[i][j];
+    		}
+    		boardString += "\n";
+    	}
+    	String playerTurn = "Turn: ";
+    	if (player == 1){
+    		playerTurn += ((Integer)((turn/2)+1)).toString();
+    	} else {
+    		playerTurn += ((Integer)(turn/2)).toString();
+    	}
+    	String scores = "";
+    	if (player == 1){
+    		
+    	}
       // To be completed
 
       return "";
