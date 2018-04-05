@@ -78,13 +78,7 @@ class Scribble implements Runnable {
        included in the handout.
      */
     String getGameState(int player) {
-    	String boardString = "";
-    	for (int i = 0; i < board.length; i++){ 
-    		for (int j = 0; j < board[i].length; j++){
-    			boardString += board[i][j];
-    		}
-    		boardString += "\n";
-    	}
+    	String boardString = toString();	
     	String playerTurn = "Turn: ";
     	if (player == 1){
     		playerTurn += ((Integer)((turn/2)+1)).toString();
@@ -93,11 +87,26 @@ class Scribble implements Runnable {
     	}
     	String scores = "";
     	if (player == 1){
-    		
+    		scores = "Scores: " + ((Integer)score1).toString()
+    			   + " (opponent: " + ((Integer)score2).toString() + ")";
+    	} else {
+    		scores = "Scores: " + ((Integer)score2).toString()
+     			   + " (opponent: " + ((Integer)score1).toString() + ")";
+    	}
+    	String rack = "Rack: ";
+    	if (player == 1){
+    		for (int i = 0; i < rack1.length; i++){
+    			rack += rack1[i];
+    		}
+    	} else {
+    		for (int i = 0; i < rack2.length; i++){
+    			rack += rack2[i];
+    		}
     	}
       // To be completed
 
-      return "";
+      return boardString + "\n" + playerTurn + "\n" 
+      			+ scores + "\n" + rack + "\n";
     }// getGameState method
 
     /* Initialize dict with the contents of the dict.txt file (stored in the
@@ -169,10 +178,40 @@ class Scribble implements Runnable {
        is surrounded by 4 letters.
      */
     public String toString() {
-
+    	String boardString = "";
+    	for (int i = 0; i < board.length; i++){ 
+    		for (int j = 0; j < board[i].length; j++){
+    			if (i > 2 && j > 2 && i < 20 && j < 20 && i%2 != 0 && j%2 != 0){
+    				boolean tl = false;
+    				if (board[i-1][j-1] != ' '){
+    				    tl = true;
+    				}
+    				boolean tr = false;
+    				if (board[i-1][j+1] != ' '){
+    				    tr = true;
+    				}
+    				boolean bl = false;
+    				if (board[i+1][j-1] != ' '){
+    				    bl = true;
+    				}
+    				boolean br = false;
+    				if (board[i+1][j+1] != ' '){
+    				    br = true;
+    				}
+    				if (tl && tr && bl && br){
+    					boardString += " ";
+    				} else {
+    					boardString += "+";
+    				}
+    				
+    			}
+    			boardString += board[i][j];
+    		}
+    		boardString += "\n";
+    	}
       // To be completed
 
-      return "";
+      return boardString;
     }// toString method
 
   /* open the I/O streams of the given sockets and assign them to the
