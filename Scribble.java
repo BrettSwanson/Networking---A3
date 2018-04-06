@@ -35,7 +35,16 @@ class Scribble implements Runnable {
 
     /* add your instance/class variables, if any, after this point and before
        the constructor that follows */
-    Socket clientSocket1, clientSocket2;
+    DataOutputStream fpOut, spOut;
+    DataInputStream spIn, fpIn;
+    String waitMessage = ", please wait for your opponent...";
+    String sPrompt = "Start location of your word(e.g., B3)";
+    String dPrompt = "Direction of your word (A or D): ";
+    String wPrompt = "Your word: ";
+    String currError;
+    String winGameOver = "You won - GAME OVER!";
+    String lostGameOver = "You lost - GAME OVER!";
+    boolean gameOver = false;
 
 
     /* initialize a Scribble game:
@@ -49,8 +58,6 @@ class Scribble implements Runnable {
     Scribble(Socket clientSocket1, Socket clientSocket2, int seed) {
       loadDictionary();
       board = buildBoard();
-      this.clientSocket1 = clientSocket1;
-      this.clientSocket2 = clientSocket2;
       openStreams(clientSocket1, clientSocket2);
       state = State.I1;
       rnd = new Random(seed);
@@ -67,7 +74,7 @@ class Scribble implements Runnable {
         } catch(EOFException e) {
             System.out.println("Client died unexpectedly");
         }catch (IOException e) {
-            System.out.println("blah blah blah " + e);
+            System.out.println("I/O Error: " + e);
         }
 
     }// run method
@@ -321,17 +328,197 @@ class Scribble implements Runnable {
     }
 
     public void startGame() throws IOException {
+        String reply, query;
         boolean first = rnd.nextBoolean();
-        switch(state) {
-            case I1:
-                if (first) {
-                    this.player1 = clientSocket2;
-                    this.player2 = clientSocket1;
-                } else {
-                    this.player1 = clientSocket1;
-                    this.player2 = clientSocket2;
-                }
+        if (first) {
+            fpOut = out2;
+            fpIn = in2;
+            spOut = out1;
+            spIn = in1;
+        } else {
+            fpOut = out1;
+            fpIn  = in1;
+            spOut = out2;
+            spIn = in2;
         }
+        fpOut.writeUTF("Enter your name: ");
+        state = State.I1;
+        boolean formatCorrect;
+        while (true) {
+            switch (state) {
+                case I1:
+                    name1 = fpIn.readUTF();
+                    spOut.writeUTF(name2 + waitMessage);
+                    spOut.writeUTF("Enter your name: ");
+                    state = State.I2;
+                    break;
+                case I2:
+                    name2 = spIn.readUTF();
+                    spOut.writeUTF(name1 + waitMessage);
+                    fpOut.writeUTF(getGameState(1));
+                    fpOut.writeUTF(sPrompt);
+                    state = State.I3;
+                    break;
+                case I3:
+                    reply = fpIn.readUTF();
+                    formatCorrect = false;
+                    if (((int) reply.charAt(0) >= 65) && (int) reply.charAt(0) <= 74) {
+                        if (((int) reply.charAt(1) >= 48) && (int) reply.charAt(1) <= 57) {
+                            formatCorrect = true;
+                        }
+                    }
+                    if (!formatCorrect) {
+                        fpOut.writeUTF(getGameState(1));
+                        fpOut.writeUTF("Invalid Location!\n");
+                        fpOut.writeUTF(sPrompt);
+                        break;
+                    } else {
+                        fpOut.writeUTF(dPrompt);
+                        state = State.I4;
+                        break;
+                    }
+                case I4:
+                    reply = fpIn.readUTF();
+                    formatCorrect = false;
+                    if (reply.equalsIgnoreCase("A") || reply.equalsIgnoreCase("D")) {
+                        formatCorrect = true;
+                    }
+
+                    if (formatCorrect) {
+                        fpOut.writeUTF(wPrompt);
+                        state = State.I5;
+                        break;
+                    }
+                    else {
+                        fpOut.writeUTF("Invalid direction!\n");
+                        fpOut.writeUTF(dPrompt);
+                        break;
+                    }
+                case I5:
+                    reply = fpIn.readUTF();
+                    if (isValidWord(reply)) {
+                        update();
+                        fpOut.writeUTF(getGameState(1));
+                        fpOut.writeUTF(name1 + waitMessage);
+                        spOut.writeUTF(getGameState(2));
+                        spOut.writeUTF(sPrompt);
+                        state = State.I6;
+                        break;
+                    }
+                    else {
+                        fpOut.writeUTF(getGameState(1));
+                        fpOut.writeUTF(currError);
+                        fpOut.writeUTF(name1 + waitMessage);
+                        spOut.writeUTF(getGameState(2));
+                        spOut.writeUTF(sPrompt);
+                        state = State.I6;
+                        break;
+                    }
+                case I6:
+                    reply = spIn.readUTF();
+                    formatCorrect = false;
+                    if (((int) reply.charAt(0) >= 65) && (int) reply.charAt(0) <= 74) {
+                        if (((int) reply.charAt(1) >= 48) && (int) reply.charAt(1) <= 57) {
+                            formatCorrect = true;
+                        }
+                    }
+                    if (!formatCorrect) {
+                        spOut.writeUTF("Invalid Location!\n");
+                        spOut.writeUTF(sPrompt);
+                        break;
+                    } else {
+                        spOut.writeUTF(dPrompt);
+                        state = State.I7;
+                        break;
+                    }
+                case I7:
+                    reply = spIn.readUTF();
+                    formatCorrect = false;
+                    if (reply.equalsIgnoreCase("A") || reply.equalsIgnoreCase("D")) {
+                        formatCorrect = true;
+                    }
+
+                    if (formatCorrect) {
+                        spOut.writeUTF(wPrompt);
+                        state = State.I8;
+                        break;
+                    }
+                    else {
+                        spOut.writeUTF("Invalid direction!\n");
+                        spOut.writeUTF(dPrompt);
+                        break;
+                    }
+                case I8:
+                    reply = spIn.readUTF();
+                    if (isValidWord(reply)) {
+                        if (turn == MAX_TURNS) {
+                            update();
+                            fpOut.writeUTF(getGameState(1));
+                            spOut.writeUTF(getGameState(2));
+                            if (score1 > score2) {
+                                fpOut.writeUTF(winGameOver);
+                                spOut.writeUTF(lostGameOver);
+                            }
+                            else {
+                                fpOut.writeUTF(lostGameOver);
+                                spOut.writeUTF(winGameOver);
+                            }
+                            gameOver = true;
+                            break;
+                        }
+                        else {
+                            turn++;
+                            update();
+                            spOut.writeUTF(getGameState(2));
+                            spOut.writeUTF(waitMessage);
+                            fpOut.writeUTF((getGameState(1)));
+                            fpOut.writeUTF(sPrompt);
+                            state = State.I3;
+                            break;
+                        }
+                    } else {
+                        if (turn == MAX_TURNS) {
+                            fpOut.writeUTF(getGameState(1));
+                            spOut.writeUTF(getGameState(2));
+                            spOut.writeUTF(currError);
+                            if (score1 > score2) {
+                                fpOut.writeUTF(winGameOver);
+                                spOut.writeUTF(lostGameOver);
+                            }
+                            else {
+                                fpOut.writeUTF(lostGameOver);
+                                spOut.writeUTF(winGameOver);
+                            }
+                            gameOver = true;
+                        }
+                        else {
+                            turn++;
+                            spOut.writeUTF(getGameState(2));
+                            spOut.writeUTF(currError);
+                            spOut.writeUTF(waitMessage);
+                            fpOut.writeUTF(getGameState(1));
+                            fpOut.writeUTF(sPrompt);
+                            state = State.I3;
+                            break;
+                        }
+                    }
+                if(gameOver) {
+                    break;
+                }
+            }
+        }
+    }
+
+    public boolean isValidWord(String word) {
+        if (!isInDictionary(word)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public void update() {
+
     }
 
 

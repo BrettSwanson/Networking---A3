@@ -81,6 +81,7 @@ public class SClient {
        namely in the provided traces.
      */
     static void playGame() {
+        State state = State.C1;
         try {
             String reply, query;
             while (true) {
@@ -90,24 +91,10 @@ public class SClient {
                     break;
                 }
                 query = console.readLine();
-                while (!query.equalsIgnoreCase("A") || !query.equalsIgnoreCase("D")) {
-                    query = console.readLine();
-                }
                 out.writeUTF(query);
                 reply = in.readUTF();
                 System.out.println(reply);
                 query = console.readLine();
-                boolean formatCorrect = false;
-                while (!formatCorrect) {
-                    if (((int) query.charAt(0) >= 65) && (int) query.charAt(0) <= 74) {
-                        if (((int) query.charAt(1) >= 48) && (int) query.charAt(1) <= 57) {
-                            formatCorrect = true;
-                        }
-                    }
-                    if (!formatCorrect) {
-                        query = console.readLine();
-                    }
-                }
                 out.writeUTF(query);
                 reply = in.readUTF();
                 System.out.println(reply);
