@@ -213,8 +213,10 @@ class Scribble implements Runnable {
     				boardString += board[i][j];
     			}
     		}
-    		boardString += "\n";
+    		//boardString += "\n";
     	}
+
+    	
       // To be completed
 
       return boardString;
@@ -273,9 +275,9 @@ class Scribble implements Runnable {
       char[][] dummyBoard = new char[22][22];
       String stringBoard = " |0|1|2|3|4|5|6|7|8|9|" +
               "-+-+-+-+-+-+-+-+-+-+-+" +
-              "A| | | | | | | | | | |" +
+              "A|A|A| | | | | | | | |" +
               "-+-+-+-+-+-+-+-+-+-+-+" +
-              "B| | | | | | | | | | |" +
+              "B|A|Z| | | | | | | | |" +
               "-+-+-+-+-+-+-+-+-+-+-+" +
               "C| | | | | | | | | | |" +
               "-+-+-+-+-+-+-+-+-+-+-+" +
