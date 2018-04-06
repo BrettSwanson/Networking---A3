@@ -209,8 +209,9 @@ class Scribble implements Runnable {
     					boardString += "+";
     				}
     				
+    			} else {
+    				boardString += board[i][j];
     			}
-    			boardString += board[i][j];
     		}
     		boardString += "\n";
     	}
