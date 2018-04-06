@@ -513,12 +513,11 @@ class Scribble implements Runnable {
         if (!isInDictionary(word)) {
             return false;
         }
-
         return true;
     }
 
     public void update() {
-
+        
     }
 
 
