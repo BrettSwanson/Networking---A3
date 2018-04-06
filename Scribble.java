@@ -204,17 +204,29 @@ class Scribble implements Runnable {
     				    br = true;
     				}
     				if (tl && tr && bl && br){
-    					boardString += " ";
+    					board[i][j] = ' ';
+    					board[i-1][j] = ' ';
+    					board[i+1][j] = ' ';
+    					board[i][j+1] = ' ';
+    					board[i][j-1] = ' ';
+    					//boardString += " ";
     				} else {
-    					boardString += "+";
+    					//boardString += "+";
     				}
     				
     			} else {
-    				boardString += board[i][j];
+    				//boardString += board[i][j];
     			}
+    		}
+    		//boardString += "\n";
+    	}
+    	for (int i = 0; i < board.length; i++){ 
+    		for (int j = 0; j < board[i].length; j++){
+    			boardString += board[i][j];
     		}
     		boardString += "\n";
     	}
+    	
       // To be completed
 
       return boardString;
