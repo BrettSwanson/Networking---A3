@@ -22,8 +22,8 @@ public class SClient {
      */
     public static void main(String[] args) {
         String query, reply;
-
       try {
+
           socket = new Socket(hostName, portNumber);
           System.out.println("Connected to server: " + socket);
           openStreams();
