@@ -316,7 +316,7 @@ class Scribble implements Runnable {
     }
 
     public void startGame() throws IOException {
-        boolean first = rnd.nextBoolean();
+    	
     }
 
 
