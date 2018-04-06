@@ -35,6 +35,7 @@ class Scribble implements Runnable {
 
     /* add your instance/class variables, if any, after this point and before
        the constructor that follows */
+    Socket clientSocket1, clientSocket2;
 
 
     /* initialize a Scribble game:
@@ -48,11 +49,10 @@ class Scribble implements Runnable {
     Scribble(Socket clientSocket1, Socket clientSocket2, int seed) {
       loadDictionary();
       board = buildBoard();
-      this.player1 = clientSocket1;
-      this.player2 = clientSocket2;
-
-      openStreams(player1, player2);
-
+      this.clientSocket1 = clientSocket1;
+      this.clientSocket2 = clientSocket2;
+      openStreams(clientSocket1, clientSocket2);
+      state = State.I1;
       rnd = new Random(seed);
     }// constructor
 
@@ -219,13 +219,18 @@ class Scribble implements Runnable {
     			}
     		}
     		//boardString += "\n";
+
     	}
+
+
+
     	for (int i = 0; i < board.length; i++){ 
     		for (int j = 0; j < board[i].length; j++){
     			boardString += board[i][j];
     		}
     		boardString += "\n";
     	}
+
     	
       // To be completed
 
@@ -238,10 +243,10 @@ class Scribble implements Runnable {
   void openStreams(Socket socket1, Socket socket2) {
 
       try {
-          in1 = new DataInputStream(player1.getInputStream());
-          in2 = new DataInputStream(player2.getInputStream());
-          out1 = new DataOutputStream(player1.getOutputStream());
-          out2 = new DataOutputStream(player2.getOutputStream());
+          in1 = new DataInputStream(socket1.getInputStream());
+          in2 = new DataInputStream(socket2.getInputStream());
+          out1 = new DataOutputStream(socket1.getOutputStream());
+          out2 = new DataOutputStream(socket2.getOutputStream());
       } catch (IOException e) {
           System.out.println(e.getMessage());
       }
@@ -316,7 +321,18 @@ class Scribble implements Runnable {
     }
 
     public void startGame() throws IOException {
-    	
+        boolean first = rnd.nextBoolean();
+        switch(state) {
+            case I1:
+                if (first) {
+                    this.player1 = clientSocket2;
+                    this.player2 = clientSocket1;
+                } else {
+                    this.player1 = clientSocket1;
+                    this.player2 = clientSocket2;
+                }
+        }
+
     }
 
 
