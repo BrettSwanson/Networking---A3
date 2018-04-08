@@ -1,6 +1,6 @@
 /* Game thread for the Scribble app
 
-   @author YOUR FULL NAME GOES HERE
+   @author Brett Swanson and Trevor Nipko
 
    @version CS 391 - Spring 2018 - A3
 */
@@ -45,7 +45,9 @@ class Scribble implements Runnable {
     String winGameOver = "You won - GAME OVER!";
     String lostGameOver = "You lost - GAME OVER!";
     boolean gameOver = false;
-
+    String currStart;
+    String currDirection;
+    boolean firstWord = true;
 
     /* initialize a Scribble game:
        + load the dictionary
@@ -61,6 +63,7 @@ class Scribble implements Runnable {
       openStreams(clientSocket1, clientSocket2);
       state = State.I1;
       rnd = new Random(seed);
+      turn = 1;
     }// constructor
 
 
@@ -91,12 +94,7 @@ class Scribble implements Runnable {
      */
     String getGameState(int player) {
     	String boardString = toString();	
-    	String playerTurn = "Turn: ";
-    	if (player == 1){
-    		playerTurn += ((Integer)((turn/2)+1)).toString();
-    	} else {
-    		playerTurn += ((Integer)(turn/2)).toString();
-    	}
+    	String playerTurn = "Turn: " + turn;
     	String scores = "";
     	if (player == 1){
     		scores = "Scores: " + ((Integer)score1).toString()
@@ -373,6 +371,7 @@ class Scribble implements Runnable {
                         fpOut.writeUTF(sPrompt);
                         break;
                     } else {
+                    	currStart = reply;
                         fpOut.writeUTF(dPrompt);
                         state = State.I4;
                         break;
@@ -385,6 +384,7 @@ class Scribble implements Runnable {
                     }
 
                     if (formatCorrect) {
+                    	currDirection = reply;
                         fpOut.writeUTF(wPrompt);
                         state = State.I5;
                         break;
@@ -396,7 +396,7 @@ class Scribble implements Runnable {
                     }
                 case I5:
                     reply = fpIn.readUTF();
-                    if (isValidWord(reply)) {
+                    if (isValidWord(reply, 1)) {
                         update();
                         fpOut.writeUTF(getGameState(1));
                         fpOut.writeUTF(name1 + waitMessage);
@@ -427,6 +427,7 @@ class Scribble implements Runnable {
                         spOut.writeUTF(sPrompt);
                         break;
                     } else {
+                    	currStart = reply;
                         spOut.writeUTF(dPrompt);
                         state = State.I7;
                         break;
@@ -439,6 +440,7 @@ class Scribble implements Runnable {
                     }
 
                     if (formatCorrect) {
+                    	currDirection = reply;
                         spOut.writeUTF(wPrompt);
                         state = State.I8;
                         break;
@@ -450,7 +452,7 @@ class Scribble implements Runnable {
                     }
                 case I8:
                     reply = spIn.readUTF();
-                    if (isValidWord(reply)) {
+                    if (isValidWord(reply, 2)) {
                         if (turn == MAX_TURNS) {
                             update();
                             fpOut.writeUTF(getGameState(1));
@@ -509,9 +511,107 @@ class Scribble implements Runnable {
         }
     }
 
-    public boolean isValidWord(String word) {
-        if (!isInDictionary(word)) {
+    public boolean isValidWord(String word, int player) {
+    	int startRow = 2*(currStart.charAt(0) - 65) + 2;
+    	int startCol = 2*(Character.getNumericValue(currStart.charAt(1))) + 2;
+    	String tempWord = "";
+    	int tempWordStart;
+    	int tempWordEnd;
+    	int tempRow = startRow;
+    	int tempCol = startCol;
+    	char[][] tempBoard = board;
+    	boolean hitsExisting = false;
+    	boolean onRack = false;
+    	char[] tempRack;
+    	int tempScore;
+    	
+    	if (player == 1){
+    		tempRack = rack1;
+    		tempScore = score1;
+    	} else {
+    		tempRack = rack2;
+    		tempScore = score2;
+    	}
+    	
+    	if (!isInDictionary(word)) {
+        	currError = "The word "+word+" is not in the dictionary.";
             return false;
+        } else {
+        	tempScore += word.length();
+        }
+    	
+    	if (currDirection.equals("A")){
+        	for (int i = 0; i < word.length(); i++){
+        		if (tempCol > 20){
+        			currError = word+" is too long to fit on the board.";
+        			return false;
+        		}else{
+        			if(tempBoard[tempRow][tempCol] != ' '){
+        				if (tempBoard[tempRow][tempCol] != word.charAt(i)){
+        					currError = word.charAt(i)+" in "+word+" conflicts with a different letter on the board.";
+        					return false;
+        				}
+        				hitsExisting = true;
+        			} else {
+        				for (int j = 0; j < tempRack.length; j++){
+        					if (word.charAt(i) == tempRack[j]){
+        						onRack = true;
+        						tempRack[j] = ' ';
+        						break;
+        					}
+        				}
+        				if(!onRack){
+        					currError = "You do not have the letter "+word.charAt(i)+" on your rack!";
+        					return false;
+        				}
+        			}
+        			tempBoard[tempRow][tempCol] = word.charAt(i);
+        			tempCol += 2;
+        			onRack = false;
+        		}
+        	}
+        	if (!hitsExisting){
+        		if (firstWord){
+        			firstWord = false;
+        		} else {
+	        		currError = word+" does not build on an existing word.";
+	        		return false;
+        		}
+        	}
+        	tempCol = startCol;
+        	for (int i = 0; i < word.length(); i++){
+        		tempWordStart = tempRow;
+        		tempWordEnd = tempRow;
+        		if (tempBoard[tempRow - 2][tempCol] != ' ' || tempBoard[tempRow + 2][tempCol] != ' '){
+	        		while(tempRow - 2 >= 2 && tempBoard[tempRow - 2][tempCol] != ' '){
+	        			tempWordStart -= 2;
+	        			tempRow -=2;
+	        		}
+	        		tempRow = startRow;
+	        		while(tempRow + 2 <= 20 && tempBoard[tempRow + 2][tempCol] != ' '){
+	        			tempWordEnd += 2;
+	        			tempRow +=2;
+	        		}
+	        		for (int j = tempWordStart; j <= tempWordEnd; j +=2){
+	        			tempWord += tempBoard[j][tempCol];
+	        		}
+	        		if (!isInDictionary(tempWord)) {
+	                	currError = "The word "+tempWord+" is not in the dictionary.";
+	                    return false;
+	                } else {
+	                	tempScore += tempWord.length();
+	                }
+        		}
+        		tempCol += 2;
+        	}
+        } else {
+        	
+        }
+        board = tempBoard;
+        if (player == 1){
+        	score1 = tempScore;
+        } else {
+        	score2 = tempScore;
         }
         return true;
     }
