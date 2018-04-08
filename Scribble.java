@@ -582,7 +582,7 @@ class Scribble implements Runnable {
         	for (int i = 0; i < word.length(); i++){
         		tempWordStart = tempRow;
         		tempWordEnd = tempRow;
-        		if (tempBoard[tempRow - 2][tempCol] != ' ' || tempBoard[tempRow + 2][tempCol] != ' '){
+        		if (tempRow - 2 >= 2 && (tempBoard[tempRow - 2][tempCol] != ' ' || tempBoard[tempRow + 2][tempCol] != ' ')){
 	        		while(tempRow - 2 >= 2 && tempBoard[tempRow - 2][tempCol] != ' '){
 	        			tempWordStart -= 2;
 	        			tempRow -=2;
@@ -605,7 +605,69 @@ class Scribble implements Runnable {
         		tempCol += 2;
         	}
         } else {
-        	
+        	for (int i = 0; i < word.length(); i++){
+        		if (tempRow > 20){
+        			currError = word+" is too long to fit on the board.";
+        			return false;
+        		}else{
+        			if(tempBoard[tempRow][tempCol] != ' '){
+        				if (tempBoard[tempRow][tempCol] != word.charAt(i)){
+        					currError = word.charAt(i)+" in "+word+" conflicts with a different letter on the board.";
+        					return false;
+        				}
+        				hitsExisting = true;
+        			} else {
+        				for (int j = 0; j < tempRack.length; j++){
+        					if (word.charAt(i) == tempRack[j]){
+        						onRack = true;
+        						tempRack[j] = ' ';
+        						break;
+        					}
+        				}
+        				if(!onRack){
+        					currError = "You do not have the letter "+word.charAt(i)+" on your rack!";
+        					return false;
+        				}
+        			}
+        			tempBoard[tempRow][tempCol] = word.charAt(i);
+        			tempRow += 2;
+        			onRack = false;
+        		}
+        	}
+        	if (!hitsExisting){
+        		if (firstWord){
+        			firstWord = false;
+        		} else {
+	        		currError = word+" does not build on an existing word.";
+	        		return false;
+        		}
+        	}
+        	tempRow = startRow;
+        	for (int i = 0; i < word.length(); i++){
+        		tempWordStart = tempCol;
+        		tempWordEnd = tempCol;
+        		if (tempCol - 2 >= 2 && (tempBoard[tempRow][tempCol - 2] != ' ' || tempBoard[tempRow][tempCol + 2] != ' ')){
+	        		while(tempCol - 2 >= 2 && tempBoard[tempRow][tempCol - 2] != ' '){
+	        			tempWordStart -= 2;
+	        			tempCol -=2;
+	        		}
+	        		tempCol = startCol;
+	        		while(tempCol + 2 <= 20 && tempBoard[tempRow][tempCol + 2] != ' '){
+	        			tempWordEnd += 2;
+	        			tempCol +=2;
+	        		}
+	        		for (int j = tempWordStart; j <= tempWordEnd; j +=2){
+	        			tempWord += tempBoard[tempRow][j];
+	        		}
+	        		if (!isInDictionary(tempWord)) {
+	                	currError = "The word "+tempWord+" is not in the dictionary.";
+	                    return false;
+	                } else {
+	                	tempScore += tempWord.length();
+	                }
+        		}
+        		tempRow += 2;
+        	}
         }
         board = tempBoard;
         if (player == 1){
