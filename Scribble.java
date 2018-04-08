@@ -517,7 +517,7 @@ class Scribble implements Runnable {
     }
 
     public void update() {
-        
+
     }
 
 
