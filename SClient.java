@@ -27,14 +27,6 @@ public class SClient {
           socket = new Socket(hostName, portNumber);
           System.out.println("Connected to server: " + socket);
           openStreams();
-          reply = in.readUTF();
-          System.out.println(reply);
-          reply = in.readUTF();
-          System.out.println(reply);
-          query = console.readLine();
-          out.writeUTF(query);
-          reply = in.readUTF();
-          System.out.println(reply);
           playGame();
           close();
       } catch(UnknownHostException e) {
@@ -81,25 +73,73 @@ public class SClient {
        namely in the provided traces.
      */
     static void playGame() {
-        State state = State.C1;
+        String sPrompt = "Start location of your word(e.g., B3)";
+        String dPrompt = "Direction of your word (A or D): ";
+        String wPrompt = "Your word: ";
         try {
             String reply, query;
+            reply = in.readUTF();
+            System.out.println(reply);
+            State state = State.C1;
+            boolean gameOver = false;
             while (true) {
-                reply = in.readUTF();
-                System.out.println(reply);
-                if (reply.contains("GAME OVER")) {
+                switch(state) {
+                    case C1:
+                        reply = in.readUTF();
+                        System.out.println(reply);
+                        query = console.readLine();
+                        out.writeUTF(query);
+                        state = State.C2;
+                        break;
+                    case C2:
+                        reply = in.readUTF();
+                        System.out.println(reply);
+                        state = State.C3;
+                        break;
+                    case C3:
+                        reply = in.readUTF();
+                        System.out.println(reply);
+                        if (reply.contains("GAME OVER")) {
+                            gameOver = true;
+                        }
+                        else {
+                            query = console.readLine();
+                            out.writeUTF(query);
+                            state = State.C4;
+                        }
+                        break;
+                    case C4:
+                        reply = in.readUTF();
+                        System.out.println(reply);
+                        query = console.readLine();
+                        out.writeUTF(query);
+                        if (reply.equals(dPrompt)) {
+                            state = State.C5;
+                        }
+                        break;
+                    case C5:
+                        reply = in.readUTF();
+                        System.out.println(reply);
+                        query = console.readLine();
+                        out.writeUTF(query);
+                        if (reply.equals(wPrompt)) {
+                            state = State.C6;
+                        }
+                        break;
+                    case C6:
+                        reply = in.readUTF();
+                        System.out.println(reply);
+                        if (reply.contains("GAME OVER")) {
+                            gameOver = true;
+                        }
+                        else {
+                            state = State.C3;
+                        }
+                        break;
+                }
+                if (gameOver) {
                     break;
                 }
-                query = console.readLine();
-                out.writeUTF(query);
-                reply = in.readUTF();
-                System.out.println(reply);
-                query = console.readLine();
-                out.writeUTF(query);
-                reply = in.readUTF();
-                System.out.println(reply);
-                query = console.readLine();
-                out.writeUTF(query.toUpperCase());
             }
         } catch(UnknownHostException e) {
             System.err.println("Unknown host: " + hostName);
