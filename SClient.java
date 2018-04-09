@@ -88,7 +88,7 @@ public class SClient {
                         reply = in.readUTF();
                         System.out.println(reply);
                         query = console.readLine();
-                        out.writeUTF(query.toUpperCase());
+                        out.writeUTF(query);
                         state = State.C2;
                         break;
                     case C2:

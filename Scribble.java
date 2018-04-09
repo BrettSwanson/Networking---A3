@@ -41,7 +41,6 @@ class Scribble implements Runnable {
     String sPrompt = "Start location of your word(e.g., B3)";
     String dPrompt = "Direction of your word (A or D): ";
     String wPrompt = "Your word: ";
-    String currError;
     String winGameOver = "You won - GAME OVER!";
     String lostGameOver = "You lost - GAME OVER!";
     boolean gameOver = false;
@@ -402,7 +401,6 @@ class Scribble implements Runnable {
                     reply = fpIn.readUTF();
                     try{
                     	isValidWord(reply, 1);
-                        update();
                         fpOut.writeUTF(getGameState(1) + name1 + waitMessage);
                         spOut.writeUTF(getGameState(2) + sPrompt);
                         state = State.I6;
@@ -466,7 +464,6 @@ class Scribble implements Runnable {
                         }
                         else {
                             turn++;
-                            update();
                             spOut.writeUTF(getGameState(2) + name2 + waitMessage);
                             fpOut.writeUTF(getGameState(1) + sPrompt);
                             state = State.I3;
@@ -666,9 +663,6 @@ class Scribble implements Runnable {
         }
     }
 
-    public void update() {
-
-    }
 
 
 
