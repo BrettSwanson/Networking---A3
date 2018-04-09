@@ -354,15 +354,14 @@ class Scribble implements Runnable {
             switch (state) {
                 case I1:
                     name1 = fpIn.readUTF();
-                    spOut.writeUTF(name2 + waitMessage);
+                    fpOut.writeUTF(name1 + waitMessage);
                     spOut.writeUTF("Enter your name: ");
                     state = State.I2;
                     break;
                 case I2:
                     name2 = spIn.readUTF();
-                    spOut.writeUTF(name1 + waitMessage);
-                    fpOut.writeUTF(getGameState(1));
-                    fpOut.writeUTF(sPrompt);
+                    spOut.writeUTF(name2 + waitMessage);
+                    fpOut.writeUTF(getGameState(1) + sPrompt);
                     state = State.I3;
                     break;
                 case I3:
@@ -374,9 +373,7 @@ class Scribble implements Runnable {
                         }
                     }
                     if (!formatCorrect) {
-                        fpOut.writeUTF(getGameState(1));
-                        fpOut.writeUTF("Invalid Location!\n");
-                        fpOut.writeUTF(sPrompt);
+                        fpOut.writeUTF(getGameState(1) + "Invalid Location!\n" + sPrompt);
                         break;
                     } else {
                     	currStart = reply;
@@ -398,8 +395,7 @@ class Scribble implements Runnable {
                         break;
                     }
                     else {
-                        fpOut.writeUTF("Invalid direction!\n");
-                        fpOut.writeUTF(dPrompt);
+                        fpOut.writeUTF("Invalid direction!\n" + dPrompt);
                         break;
                     }
                 case I5:
@@ -407,19 +403,14 @@ class Scribble implements Runnable {
                     try{
                     	isValidWord(reply, 1);
                         update();
-                        fpOut.writeUTF(getGameState(1));
-                        fpOut.writeUTF(name1 + waitMessage);
-                        spOut.writeUTF(getGameState(2));
-                        spOut.writeUTF(sPrompt);
+                        fpOut.writeUTF(getGameState(1) + name1 + waitMessage);
+                        spOut.writeUTF(getGameState(2) + sPrompt);
                         state = State.I6;
                         break;
                     }
                     catch(BadWordPlacementException e) {
-                        fpOut.writeUTF(getGameState(1));
-                        fpOut.writeUTF(e.getMessage());
-                        fpOut.writeUTF(name1 + waitMessage);
-                        spOut.writeUTF(getGameState(2));
-                        spOut.writeUTF(sPrompt);
+                        fpOut.writeUTF(getGameState(1) + e.getMessage() + "\n" + name1 + waitMessage);
+                        spOut.writeUTF(getGameState(2) + sPrompt);
                         state = State.I6;
                         break;
                     }
@@ -432,8 +423,7 @@ class Scribble implements Runnable {
                         }
                     }
                     if (!formatCorrect) {
-                        spOut.writeUTF("Invalid Location!\n");
-                        spOut.writeUTF(sPrompt);
+                        spOut.writeUTF("Invalid Location!\n" + sPrompt);
                         break;
                     } else {
                     	currStart = reply;
@@ -455,8 +445,7 @@ class Scribble implements Runnable {
                         break;
                     }
                     else {
-                        spOut.writeUTF("Invalid direction!\n");
-                        spOut.writeUTF(dPrompt);
+                        spOut.writeUTF("Invalid direction!\n" + dPrompt);
                         break;
                     }
                 case I8:
@@ -464,16 +453,13 @@ class Scribble implements Runnable {
                     try {
                     	isValidWord(reply, 2); 
                         if (turn == MAX_TURNS) {
-                            update();
-                            fpOut.writeUTF(getGameState(1));
-                            spOut.writeUTF(getGameState(2));
                             if (score1 > score2) {
-                                fpOut.writeUTF(winGameOver);
-                                spOut.writeUTF(lostGameOver);
+                                fpOut.writeUTF(getGameState(1) + winGameOver);
+                                spOut.writeUTF(getGameState(2) + lostGameOver);
                             }
                             else {
-                                fpOut.writeUTF(lostGameOver);
-                                spOut.writeUTF(winGameOver);
+                                fpOut.writeUTF(getGameState(1) + lostGameOver);
+                                spOut.writeUTF(getGameState(2) + winGameOver);
                             }
                             gameOver = true;
                             break;
@@ -481,35 +467,27 @@ class Scribble implements Runnable {
                         else {
                             turn++;
                             update();
-                            spOut.writeUTF(getGameState(2));
-                            spOut.writeUTF(waitMessage);
-                            fpOut.writeUTF((getGameState(1)));
-                            fpOut.writeUTF(sPrompt);
+                            spOut.writeUTF(getGameState(2) + name2 + waitMessage);
+                            fpOut.writeUTF(getGameState(1) + sPrompt);
                             state = State.I3;
                             break;
                         }
                     } catch (BadWordPlacementException e) {
                         if (turn == MAX_TURNS) {
-                            fpOut.writeUTF(getGameState(1));
-                            spOut.writeUTF(getGameState(2));
-                            spOut.writeUTF(e.getMessage());
                             if (score1 > score2) {
-                                fpOut.writeUTF(winGameOver);
-                                spOut.writeUTF(lostGameOver);
+                                fpOut.writeUTF(getGameState(1) + winGameOver);
+                                spOut.writeUTF(getGameState(2) + e.getMessage() + "\n" + lostGameOver);
                             }
                             else {
-                                fpOut.writeUTF(lostGameOver);
-                                spOut.writeUTF(winGameOver);
+                                fpOut.writeUTF(getGameState(1) + lostGameOver);
+                                spOut.writeUTF(getGameState(2) + e.getMessage() + "\n" + winGameOver);
                             }
                             gameOver = true;
                         }
                         else {
                             turn++;
-                            spOut.writeUTF(getGameState(2));
-                            spOut.writeUTF(currError);
-                            spOut.writeUTF(waitMessage);
-                            fpOut.writeUTF(getGameState(1));
-                            fpOut.writeUTF(sPrompt);
+                            spOut.writeUTF(getGameState(2) + e.getMessage() + e.getMessage() + "\n" + waitMessage);
+                            fpOut.writeUTF(getGameState(1) + sPrompt);
                             state = State.I3;
                             break;
                         }

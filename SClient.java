@@ -88,7 +88,7 @@ public class SClient {
                         reply = in.readUTF();
                         System.out.println(reply);
                         query = console.readLine();
-                        out.writeUTF(query);
+                        out.writeUTF(query.toUpperCase());
                         state = State.C2;
                         break;
                     case C2:
@@ -104,7 +104,7 @@ public class SClient {
                         }
                         else {
                             query = console.readLine();
-                            out.writeUTF(query);
+                            out.writeUTF(query.toUpperCase());
                             state = State.C4;
                         }
                         break;
@@ -112,7 +112,7 @@ public class SClient {
                         reply = in.readUTF();
                         System.out.println(reply);
                         query = console.readLine();
-                        out.writeUTF(query);
+                        out.writeUTF(query.toUpperCase());
                         if (reply.equals(dPrompt)) {
                             state = State.C5;
                         }
@@ -121,7 +121,7 @@ public class SClient {
                         reply = in.readUTF();
                         System.out.println(reply);
                         query = console.readLine();
-                        out.writeUTF(query);
+                        out.writeUTF(query.toUpperCase());
                         if (reply.equals(wPrompt)) {
                             state = State.C6;
                         }
