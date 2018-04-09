@@ -64,6 +64,14 @@ class Scribble implements Runnable {
       state = State.I1;
       rnd = new Random(seed);
       turn = 1;
+      this.rack1 = new char[7];
+      for (int i = 0; i < rack1.length; i++){
+    	  rack1[i] = tiles[rnd.nextInt(tiles.length)];
+      }
+      this.rack2 = new char[7];
+      for (int i = 0; i < rack2.length; i++){
+    	  rack2[i] = tiles[rnd.nextInt(tiles.length)];
+      }
     }// constructor
 
 
@@ -396,7 +404,8 @@ class Scribble implements Runnable {
                     }
                 case I5:
                     reply = fpIn.readUTF();
-                    if (isValidWord(reply, 1)) {
+                    try{
+                    	isValidWord(reply, 1);
                         update();
                         fpOut.writeUTF(getGameState(1));
                         fpOut.writeUTF(name1 + waitMessage);
@@ -405,9 +414,9 @@ class Scribble implements Runnable {
                         state = State.I6;
                         break;
                     }
-                    else {
+                    catch(BadWordPlacementException e) {
                         fpOut.writeUTF(getGameState(1));
-                        fpOut.writeUTF(currError);
+                        fpOut.writeUTF(e.getMessage());
                         fpOut.writeUTF(name1 + waitMessage);
                         spOut.writeUTF(getGameState(2));
                         spOut.writeUTF(sPrompt);
@@ -452,7 +461,8 @@ class Scribble implements Runnable {
                     }
                 case I8:
                     reply = spIn.readUTF();
-                    if (isValidWord(reply, 2)) {
+                    try {
+                    	isValidWord(reply, 2); 
                         if (turn == MAX_TURNS) {
                             update();
                             fpOut.writeUTF(getGameState(1));
@@ -478,11 +488,11 @@ class Scribble implements Runnable {
                             state = State.I3;
                             break;
                         }
-                    } else {
+                    } catch (BadWordPlacementException e) {
                         if (turn == MAX_TURNS) {
                             fpOut.writeUTF(getGameState(1));
                             spOut.writeUTF(getGameState(2));
-                            spOut.writeUTF(currError);
+                            spOut.writeUTF(e.getMessage());
                             if (score1 > score2) {
                                 fpOut.writeUTF(winGameOver);
                                 spOut.writeUTF(lostGameOver);
@@ -511,7 +521,7 @@ class Scribble implements Runnable {
         }
     }
 
-    public boolean isValidWord(String word, int player) {
+    public void isValidWord(String word, int player) {
     	int startRow = 2*(currStart.charAt(0) - 65) + 2;
     	int startCol = 2*(Character.getNumericValue(currStart.charAt(1))) + 2;
     	String tempWord = "";
@@ -534,8 +544,7 @@ class Scribble implements Runnable {
     	}
     	
     	if (!isInDictionary(word)) {
-        	currError = "The word "+word+" is not in the dictionary.";
-            return false;
+    		throw new BadWordPlacementException("The word "+word+" is not in the dictionary.");
         } else {
         	tempScore += word.length();
         }
@@ -543,13 +552,11 @@ class Scribble implements Runnable {
     	if (currDirection.equals("A")){
         	for (int i = 0; i < word.length(); i++){
         		if (tempCol > 20){
-        			currError = word+" is too long to fit on the board.";
-        			return false;
+        			throw new BadWordPlacementException(word+" is too long to fit on the board.");
         		}else{
         			if(tempBoard[tempRow][tempCol] != ' '){
         				if (tempBoard[tempRow][tempCol] != word.charAt(i)){
-        					currError = word.charAt(i)+" in "+word+" conflicts with a different letter on the board.";
-        					return false;
+        					throw new BadWordPlacementException(word.charAt(i)+" in "+word+" conflicts with a different letter on the board.");
         				}
         				hitsExisting = true;
         			} else {
@@ -561,8 +568,7 @@ class Scribble implements Runnable {
         					}
         				}
         				if(!onRack){
-        					currError = "You do not have the letter "+word.charAt(i)+" on your rack!";
-        					return false;
+        					throw new BadWordPlacementException("You do not have the letter "+word.charAt(i)+" on your rack!");
         				}
         			}
         			tempBoard[tempRow][tempCol] = word.charAt(i);
@@ -574,15 +580,14 @@ class Scribble implements Runnable {
         		if (firstWord){
         			firstWord = false;
         		} else {
-	        		currError = word+" does not build on an existing word.";
-	        		return false;
+        			throw new BadWordPlacementException(word+" does not build on an existing word.");
         		}
         	}
         	tempCol = startCol;
         	for (int i = 0; i < word.length(); i++){
         		tempWordStart = tempRow;
         		tempWordEnd = tempRow;
-        		if (tempRow - 2 >= 2 && (tempBoard[tempRow - 2][tempCol] != ' ' || tempBoard[tempRow + 2][tempCol] != ' ')){
+        		if ((tempRow - 2 >= 2 && tempBoard[tempRow - 2][tempCol] != ' ' ) || (tempRow + 2 <= 20 && tempBoard[tempRow + 2][tempCol] != ' ')){
 	        		while(tempRow - 2 >= 2 && tempBoard[tempRow - 2][tempCol] != ' '){
 	        			tempWordStart -= 2;
 	        			tempRow -=2;
@@ -596,8 +601,7 @@ class Scribble implements Runnable {
 	        			tempWord += tempBoard[j][tempCol];
 	        		}
 	        		if (!isInDictionary(tempWord)) {
-	                	currError = "The word "+tempWord+" is not in the dictionary.";
-	                    return false;
+	        			throw new BadWordPlacementException("The word "+tempWord+" is not in the dictionary.");
 	                } else {
 	                	tempScore += tempWord.length();
 	                }
@@ -607,13 +611,11 @@ class Scribble implements Runnable {
         } else {
         	for (int i = 0; i < word.length(); i++){
         		if (tempRow > 20){
-        			currError = word+" is too long to fit on the board.";
-        			return false;
+        			throw new BadWordPlacementException(word+" is too long to fit on the board.");
         		}else{
         			if(tempBoard[tempRow][tempCol] != ' '){
         				if (tempBoard[tempRow][tempCol] != word.charAt(i)){
-        					currError = word.charAt(i)+" in "+word+" conflicts with a different letter on the board.";
-        					return false;
+        					throw new BadWordPlacementException(word.charAt(i)+" in "+word+" conflicts with a different letter on the board.");
         				}
         				hitsExisting = true;
         			} else {
@@ -625,8 +627,7 @@ class Scribble implements Runnable {
         					}
         				}
         				if(!onRack){
-        					currError = "You do not have the letter "+word.charAt(i)+" on your rack!";
-        					return false;
+        					throw new BadWordPlacementException("You do not have the letter "+word.charAt(i)+" on your rack!");
         				}
         			}
         			tempBoard[tempRow][tempCol] = word.charAt(i);
@@ -638,15 +639,14 @@ class Scribble implements Runnable {
         		if (firstWord){
         			firstWord = false;
         		} else {
-	        		currError = word+" does not build on an existing word.";
-	        		return false;
+        			throw new BadWordPlacementException(word+" does not build on an existing word.");
         		}
         	}
         	tempRow = startRow;
         	for (int i = 0; i < word.length(); i++){
         		tempWordStart = tempCol;
         		tempWordEnd = tempCol;
-        		if (tempCol - 2 >= 2 && (tempBoard[tempRow][tempCol - 2] != ' ' || tempBoard[tempRow][tempCol + 2] != ' ')){
+        		if ((tempCol - 2 >= 2 && tempBoard[tempRow][tempCol - 2] != ' ') || (tempCol + 2 <= 20 && tempBoard[tempRow][tempCol + 2] != ' ')){
 	        		while(tempCol - 2 >= 2 && tempBoard[tempRow][tempCol - 2] != ' '){
 	        			tempWordStart -= 2;
 	        			tempCol -=2;
@@ -660,8 +660,7 @@ class Scribble implements Runnable {
 	        			tempWord += tempBoard[tempRow][j];
 	        		}
 	        		if (!isInDictionary(tempWord)) {
-	                	currError = "The word "+tempWord+" is not in the dictionary.";
-	                    return false;
+	        			throw new BadWordPlacementException("The word "+tempWord+" is not in the dictionary.");
 	                } else {
 	                	tempScore += tempWord.length();
 	                }
@@ -672,10 +671,21 @@ class Scribble implements Runnable {
         board = tempBoard;
         if (player == 1){
         	score1 = tempScore;
+        	for (int i = 0; i < tempRack.length; i++){
+        		if (tempRack[i] == ' '){
+        			tempRack[i] = tiles[rnd.nextInt(tiles.length)];
+        		}
+            }
+        	rack1 = tempRack;
         } else {
         	score2 = tempScore;
+        	for (int i = 0; i < tempRack.length; i++){
+        		if (tempRack[i] == ' '){
+        			tempRack[i] = tiles[rnd.nextInt(tiles.length)];
+        		}
+            }
+        	rack2 = tempRack;
         }
-        return true;
     }
 
     public void update() {
