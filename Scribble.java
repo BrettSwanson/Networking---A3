@@ -572,14 +572,18 @@ class Scribble implements Runnable {
 	        			tempWordEnd += 2;
 	        			tempRow +=2;
 	        		}
+	        		
 	        		for (int j = tempWordStart; j <= tempWordEnd; j +=2){
 	        			tempWord += tempBoard[j][tempCol];
 	        		}
+	        		
 	        		if (!isInDictionary(tempWord)) {
 	        			throw new BadWordPlacementException("The word "+tempWord+" is not in the dictionary.");
 	                } else {
 	                	tempScore += tempWord.length();
+	                	tempWord = "";
 	                }
+	        		
         		}
         		tempCol += 2;
         	}
@@ -631,14 +635,18 @@ class Scribble implements Runnable {
 	        			tempWordEnd += 2;
 	        			tempCol +=2;
 	        		}
+	        		
 	        		for (int j = tempWordStart; j <= tempWordEnd; j +=2){
 	        			tempWord += tempBoard[tempRow][j];
 	        		}
+	        		
 	        		if (!isInDictionary(tempWord)) {
 	        			throw new BadWordPlacementException("The word "+tempWord+" is not in the dictionary.");
 	                } else {
 	                	tempScore += tempWord.length();
+	                	tempWord = "";
 	                }
+	        		
         		}
         		tempRow += 2;
         	}
