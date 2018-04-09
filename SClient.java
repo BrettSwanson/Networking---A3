@@ -1,6 +1,6 @@
 /* Client program for the Scribble app
 
-   @author <YOUR FULL NAME GOES HERE>
+   @author Brett Swanson and Trevor Nipko
 
    @version CS 391 - Spring 2018 - A3
 */
