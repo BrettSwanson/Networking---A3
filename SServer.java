@@ -41,7 +41,7 @@ public class SServer {
 		        DataOutputStream out2 = new DataOutputStream(clientSocketTwo.getOutputStream());
 		        out2.writeUTF("Welcome to Scribble!\n\nPlease wait for your opponent...");
 		        
-		        (new Thread( new Scribble(clientSocketOne, clientSocketTwo, seed))).start();
+		        (new Thread( new Scribble(clientSocketOne, clientSocketTwo, 1))).start();
 	         }
         } catch (IOException e) {
             System.out.println("Server encountered an error. "

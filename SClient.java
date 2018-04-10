@@ -141,6 +141,7 @@ public class SClient {
                     break;
                 }
             }
+            close();
         } catch(UnknownHostException e) {
             System.err.println("Unknown host: " + hostName);
             System.exit(1);

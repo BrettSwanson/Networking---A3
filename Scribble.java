@@ -359,7 +359,7 @@ class Scribble implements Runnable {
     }
 
     public void startGame() throws IOException {
-        String reply, query;
+        String reply;
         boolean first = rnd.nextBoolean();
         if (first) {
             fpOut = out2;
@@ -509,7 +509,7 @@ class Scribble implements Runnable {
                         }
                         else {
                             turn++;
-                            spOut.writeUTF(getGameState(2) + e.getMessage() + e.getMessage() + "\n" + waitMessage);
+                            spOut.writeUTF(getGameState(2) + e.getMessage() + "\n" + name2 + waitMessage);
                             fpOut.writeUTF(getGameState(1) +  sPrompt);
                             state = State.I3;
                             break;
@@ -530,7 +530,7 @@ class Scribble implements Runnable {
     	int tempWordEnd;
     	int tempRow = startRow;
     	int tempCol = startCol;
-    	char[][] tempBoard = board;
+    	char[][] tempBoard = board.clone();
     	boolean hitsExisting = false;
     	boolean onRack = false;
     	char[] tempRack;
@@ -662,7 +662,6 @@ class Scribble implements Runnable {
         		}
         	}
         	tempRow = startRow;
-        	tempCol = startCol;
         	for (int i = 0; i < word.length(); i++){
         	    tempCol = startCol;
         		tempWordStart = tempCol;
