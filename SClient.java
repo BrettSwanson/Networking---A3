@@ -86,19 +86,19 @@ public class SClient {
                 switch(state) {
                     case C1:
                         reply = in.readUTF();
-                        System.out.println(reply);
+                        System.out.print(reply);
                         query = console.readLine();
                         out.writeUTF(query);
                         state = State.C2;
                         break;
                     case C2:
                         reply = in.readUTF();
-                        System.out.println(reply);
+                        System.out.print(reply);
                         state = State.C3;
                         break;
                     case C3:
                         reply = in.readUTF();
-                        System.out.println(reply);
+                        System.out.print(reply);
                         if (reply.contains("GAME OVER")) {
                             gameOver = true;
                         }
@@ -110,7 +110,7 @@ public class SClient {
                         break;
                     case C4:
                         reply = in.readUTF();
-                        System.out.println(reply);
+                        System.out.print(reply);
                         query = console.readLine();
                         out.writeUTF(query.toUpperCase());
                         if (reply.equals(dPrompt)) {
@@ -119,7 +119,7 @@ public class SClient {
                         break;
                     case C5:
                         reply = in.readUTF();
-                        System.out.println(reply);
+                        System.out.print(reply);
                         query = console.readLine();
                         out.writeUTF(query.toUpperCase());
                         if (reply.equals(wPrompt)) {
@@ -128,7 +128,7 @@ public class SClient {
                         break;
                     case C6:
                         reply = in.readUTF();
-                        System.out.println(reply);
+                        System.out.print(reply);
                         if (reply.contains("GAME OVER")) {
                             gameOver = true;
                         }

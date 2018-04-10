@@ -37,8 +37,8 @@ class Scribble implements Runnable {
        the constructor that follows */
     DataOutputStream fpOut, spOut;
     DataInputStream spIn, fpIn;
-    String waitMessage = ", please wait for your opponent...";
-    String sPrompt = "Start location of your word(e.g., B3)";
+    String waitMessage = ", please wait for your opponent...\n";
+    String sPrompt = "Start location of your word(e.g., B3)? ";
     String dPrompt = "Direction of your word (A or D): ";
     String wPrompt = "Your word: ";
     String winGameOver = "You won - GAME OVER!";
@@ -241,7 +241,9 @@ class Scribble implements Runnable {
     		for (int j = 0; j < board[i].length; j++){
     			boardString += board[i][j];
     		}
-    		boardString += "\n";
+    		if (i != board.length-1) {
+                boardString += "\n";
+            }
     	}
 
     	
@@ -377,14 +379,14 @@ class Scribble implements Runnable {
             switch (state) {
                 case I1:
                     name1 = fpIn.readUTF();
-                    fpOut.writeUTF(name1 + waitMessage);
+                    fpOut.writeUTF(name1 + waitMessage + "\n");
                     spOut.writeUTF("Enter your name: ");
                     state = State.I2;
                     break;
                 case I2:
                     name2 = spIn.readUTF();
                     spOut.writeUTF(name2 + waitMessage);
-                    fpOut.writeUTF(getGameState(1) + sPrompt);
+                    fpOut.writeUTF(getGameState(1) +  sPrompt);
                     state = State.I3;
                     break;
                 case I3:
@@ -425,7 +427,7 @@ class Scribble implements Runnable {
                     reply = fpIn.readUTF();
                     try{
                     	isValidWord(reply, 1);
-                        fpOut.writeUTF(getGameState(1) + name1 + waitMessage);
+                        fpOut.writeUTF(getGameState(1) + "\n" +  name1 + waitMessage);
                         spOut.writeUTF(getGameState(2) + sPrompt);
                         state = State.I6;
                         break;
@@ -508,7 +510,7 @@ class Scribble implements Runnable {
                         else {
                             turn++;
                             spOut.writeUTF(getGameState(2) + e.getMessage() + e.getMessage() + "\n" + waitMessage);
-                            fpOut.writeUTF(getGameState(1) + sPrompt);
+                            fpOut.writeUTF(getGameState(1) +  sPrompt);
                             state = State.I3;
                             break;
                         }
@@ -591,6 +593,7 @@ class Scribble implements Runnable {
         	}
         	tempCol = startCol;
         	for (int i = 0; i < word.length(); i++){
+        	    tempRow = startRow;
         		tempWordStart = tempRow;
         		if ((tempRow - 2 >= 2 && tempBoard[tempRow - 2][tempCol] != ' ' ) || (tempRow + 2 <= 20 && tempBoard[tempRow + 2][tempCol] != ' ')){
 	        		while(tempRow - 2 >= 2 && tempBoard[tempRow - 2][tempCol] != ' '){
@@ -659,7 +662,9 @@ class Scribble implements Runnable {
         		}
         	}
         	tempRow = startRow;
+        	tempCol = startCol;
         	for (int i = 0; i < word.length(); i++){
+        	    tempCol = startCol;
         		tempWordStart = tempCol;
         		if ((tempCol - 2 >= 2 && tempBoard[tempRow][tempCol - 2] != ' ') || (tempCol + 2 <= 20 && tempBoard[tempRow][tempCol + 2] != ' ')){
 	        		while(tempCol - 2 >= 2 && tempBoard[tempRow][tempCol - 2] != ' '){
