@@ -530,7 +530,7 @@ class Scribble implements Runnable {
     	int tempWordEnd;
     	int tempRow = startRow;
     	int tempCol = startCol;
-    	char[][] tempBoard = board.clone();
+    	char[][] tempBoard = new char[22][22];
     	boolean hitsExisting = false;
     	boolean onRack = false;
     	char[] tempRack;
@@ -550,6 +550,12 @@ class Scribble implements Runnable {
             }
     		tempScore = score2;
     	}
+    	
+    	for (int i = 0; i < 22; i++) {
+            for(int j = 0; j < 22; j++) {
+                tempBoard[i][j] = board[i][j];
+            }
+        }
     	
     	if (!isInDictionary(word)) {
     		throw new BadWordPlacementException("The word "+word+" is not in the dictionary.");
@@ -584,13 +590,7 @@ class Scribble implements Runnable {
         			onRack = false;
         		}
         	}
-        	if (!hitsExisting){
-        		if (firstWord){
-        			firstWord = false;
-        		} else {
-        			throw new BadWordPlacementException(word+" does not build on an existing word.");
-        		}
-        	}
+        	
         	tempCol = startCol;
         	for (int i = 0; i < word.length(); i++){
         	    tempRow = startRow;
@@ -611,6 +611,9 @@ class Scribble implements Runnable {
 	        			tempWord += tempBoard[j][tempCol];
 	        			if (checkBoard[j][tempCol] == '0'){
 	        				scoreCheck = true;
+	        			}
+	        			if (checkBoard[j][tempCol] == '1'){
+	        				hitsExisting = true;
 	        			}
 	        		}
 	        		
@@ -654,13 +657,7 @@ class Scribble implements Runnable {
         			onRack = false;
         		}
         	}
-        	if (!hitsExisting){
-        		if (firstWord){
-        			firstWord = false;
-        		} else {
-        			throw new BadWordPlacementException(word+" does not build on an existing word.");
-        		}
-        	}
+        	
         	tempRow = startRow;
         	for (int i = 0; i < word.length(); i++){
         	    tempCol = startCol;
@@ -682,6 +679,9 @@ class Scribble implements Runnable {
 	        			if (checkBoard[tempRow][j] == '0'){
 	        				scoreCheck = true;
 	        			}
+	        			if (checkBoard[tempRow][j] == 'i'){
+	        				hitsExisting = true;
+	        			}
 	        		}
 	        		
 	        		if (!isInDictionary(tempWord)) {
@@ -698,6 +698,13 @@ class Scribble implements Runnable {
         		tempRow += 2;
         	}
         }
+    	if (!hitsExisting){
+			if (firstWord){
+				firstWord = false;
+			} else {
+				throw new BadWordPlacementException(word+" does not build on an existing word.");
+			}
+		}
     	tempRow = startRow;
     	tempCol = startCol;
     	if (currDirection.equals("A")){
