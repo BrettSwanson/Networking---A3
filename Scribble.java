@@ -47,6 +47,7 @@ class Scribble implements Runnable {
     String currStart;
     String currDirection;
     boolean firstWord = true;
+    char[][] checkBoard = new char[22][22];
 
     /* initialize a Scribble game:
        + load the dictionary
@@ -322,10 +323,33 @@ class Scribble implements Runnable {
               "-+-+-+-+-+-+-+-+-+-+-+" +
               "J| | | | | | | | | | |" +
               "-+-+-+-+-+-+-+-+-+-+-+";
+      String stringBoardCheck = " |0|1|2|3|4|5|6|7|8|9|" +
+              "-+-+-+-+-+-+-+-+-+-+-+" +
+              "A|0|0|0|0|0|0|0|0|0|0|" +
+              "-+-+-+-+-+-+-+-+-+-+-+" +
+              "B|0|0|0|0|0|0|0|0|0|0|" +
+              "-+-+-+-+-+-+-+-+-+-+-+" +
+              "C|0|0|0|0|0|0|0|0|0|0|" +
+              "-+-+-+-+-+-+-+-+-+-+-+" +
+              "D|0|0|0|0|0|0|0|0|0|0|" +
+              "-+-+-+-+-+-+-+-+-+-+-+" +
+              "E|0|0|0|0|0|0|0|0|0|0|" +
+              "-+-+-+-+-+-+-+-+-+-+-+" +
+              "F|0|0|0|0|0|0|0|0|0|0|" +
+              "-+-+-+-+-+-+-+-+-+-+-+" +
+              "G|0|0|0|0|0|0|0|0|0|0|" +
+              "-+-+-+-+-+-+-+-+-+-+-+" +
+              "H|0|0|0|0|0|0|0|0|0|0|" +
+              "-+-+-+-+-+-+-+-+-+-+-+" +
+              "I|0|0|0|0|0|0|0|0|0|0|" +
+              "-+-+-+-+-+-+-+-+-+-+-+" +
+              "J|0|0|0|0|0|0|0|0|0|0|" +
+              "-+-+-+-+-+-+-+-+-+-+-+";
       int curr = 0;
       for (int i = 0; i < 22; i++) {
           for(int j = 0; j < 22; j++) {
               dummyBoard[i][j] = stringBoard.charAt(curr);
+              checkBoard[i][j] = stringBoardCheck.charAt(curr);
               curr++;
           }
       }
@@ -509,6 +533,7 @@ class Scribble implements Runnable {
     	boolean onRack = false;
     	char[] tempRack;
     	int tempScore;
+    	boolean scoreCheck = false;
     	
     	if (player == 1){
     	    tempRack = new char[rack1.length];
@@ -581,13 +606,19 @@ class Scribble implements Runnable {
 	        		
 	        		for (int j = tempWordStart; j <= tempWordEnd; j +=2){
 	        			tempWord += tempBoard[j][tempCol];
+	        			if (checkBoard[j][tempCol] == '0'){
+	        				scoreCheck = true;
+	        			}
 	        		}
 	        		
 	        		if (!isInDictionary(tempWord)) {
 	        			throw new BadWordPlacementException("The word "+tempWord+" is not in the dictionary.");
 	                } else {
-	                	tempScore += tempWord.length();
+	                	if (scoreCheck){
+	                		tempScore += tempWord.length();
+	                	}
 	                	tempWord = "";
+	                	scoreCheck = false;
 	                }
 	        		
         		}
@@ -644,19 +675,38 @@ class Scribble implements Runnable {
 	        		
 	        		for (int j = tempWordStart; j <= tempWordEnd; j +=2){
 	        			tempWord += tempBoard[tempRow][j];
+	        			if (checkBoard[tempRow][j] == '0'){
+	        				scoreCheck = true;
+	        			}
 	        		}
 	        		
 	        		if (!isInDictionary(tempWord)) {
 	        			throw new BadWordPlacementException("The word "+tempWord+" is not in the dictionary.");
 	                } else {
-	                	tempScore += tempWord.length();
+	                	if (scoreCheck){
+	                		tempScore += tempWord.length();
+	                	}
 	                	tempWord = "";
+	                	scoreCheck = false;
 	                }
 	        		
         		}
         		tempRow += 2;
         	}
         }
+    	tempRow = startRow;
+    	tempCol = startCol;
+    	if (currDirection.equals("A")){
+    		for (int i = 0; i < word.length(); i++){
+    			checkBoard[tempRow][tempCol] = '1';
+    			tempCol += 2;
+    		}
+    	} else {
+    		for (int i = 0; i < word.length(); i++){
+    			checkBoard[tempRow][tempCol] = '1';
+    			tempRow += 2;
+    		}
+    	}
         board = tempBoard;
         if (player == 1){
         	score1 = tempScore;
