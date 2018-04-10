@@ -530,7 +530,12 @@ class Scribble implements Runnable {
     	int tempWordEnd;
     	int tempRow = startRow;
     	int tempCol = startCol;
-    	char[][] tempBoard = board.clone();
+    	char[][] tempBoard = new char[22][22];
+    	for (int i = 0; i < board.length; i++) {
+    	    for (int j = 0; j < board[0].length; j++) {
+    	        tempBoard[i][j] = board[i][j];
+            }
+        }
     	boolean hitsExisting = false;
     	boolean onRack = false;
     	char[] tempRack;
