@@ -511,10 +511,16 @@ class Scribble implements Runnable {
     	int tempScore;
     	
     	if (player == 1){
-    		tempRack = rack1;
+    	    tempRack = new char[rack1.length];
+    	    for (int i = 0; i < rack1.length; i++) {
+    	        tempRack[i] = rack1[i];
+            }
     		tempScore = score1;
     	} else {
-    		tempRack = rack2;
+    	    tempRack = new char[rack2.length];
+            for (int i = 0; i < rack1.length; i++) {
+                tempRack[i] = rack2[i];
+            }
     		tempScore = score2;
     	}
     	
@@ -561,13 +567,13 @@ class Scribble implements Runnable {
         	tempCol = startCol;
         	for (int i = 0; i < word.length(); i++){
         		tempWordStart = tempRow;
-        		tempWordEnd = tempRow;
         		if ((tempRow - 2 >= 2 && tempBoard[tempRow - 2][tempCol] != ' ' ) || (tempRow + 2 <= 20 && tempBoard[tempRow + 2][tempCol] != ' ')){
 	        		while(tempRow - 2 >= 2 && tempBoard[tempRow - 2][tempCol] != ' '){
 	        			tempWordStart -= 2;
 	        			tempRow -=2;
 	        		}
 	        		tempRow = startRow;
+	        		tempWordEnd = tempRow;
 	        		while(tempRow + 2 <= 20 && tempBoard[tempRow + 2][tempCol] != ' '){
 	        			tempWordEnd += 2;
 	        			tempRow +=2;
@@ -624,13 +630,13 @@ class Scribble implements Runnable {
         	tempRow = startRow;
         	for (int i = 0; i < word.length(); i++){
         		tempWordStart = tempCol;
-        		tempWordEnd = tempCol;
         		if ((tempCol - 2 >= 2 && tempBoard[tempRow][tempCol - 2] != ' ') || (tempCol + 2 <= 20 && tempBoard[tempRow][tempCol + 2] != ' ')){
 	        		while(tempCol - 2 >= 2 && tempBoard[tempRow][tempCol - 2] != ' '){
 	        			tempWordStart -= 2;
 	        			tempCol -=2;
 	        		}
 	        		tempCol = startCol;
+	        		tempWordEnd = tempCol;
 	        		while(tempCol + 2 <= 20 && tempBoard[tempRow][tempCol + 2] != ' '){
 	        			tempWordEnd += 2;
 	        			tempCol +=2;
