@@ -222,16 +222,18 @@ class Scribble implements Runnable {
     					board[i+1][j] = ' ';
     					board[i][j+1] = ' ';
     					board[i][j-1] = ' ';
-    					//boardString += " ";
-    				} else {
-    					//boardString += "+";
     				}
     				
-    			} else {
-    				//boardString += board[i][j];
     			}
+    			if (i > 2 && j > 2 && i < 20 && j < 20 && i%2 == 0 && j%2 == 0) {
+    			    if (board[i][j+2] != ' ' && board[i][j] != ' ') {
+    			        board[i][j+1] = ' ';
+                    }
+                    if (board[i+2][j] != ' ' && board[i][j] != ' ') {
+    			        board[i+1][j] = ' ';
+                    }
+                }
     		}
-    		//boardString += "\n";
 
     	}
 
