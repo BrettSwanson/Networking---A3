@@ -38,7 +38,7 @@ class Scribble implements Runnable {
     DataOutputStream fpOut, spOut;
     DataInputStream spIn, fpIn;
     String waitMessage = ", please wait for your opponent...\n";
-    String sPrompt = "Start location of your word(e.g., B3)? ";
+    String sPrompt = "Start location of your word (e.g., B3)? ";
     String dPrompt = "Direction of your word (A or D): ";
     String wPrompt = "Your word: ";
     String winGameOver = "You won - GAME OVER!";
@@ -400,7 +400,7 @@ class Scribble implements Runnable {
                         }
                     }
                     if (!formatCorrect) {
-                        fpOut.writeUTF(getGameState(1) + "Invalid Location!\n" + sPrompt);
+                        fpOut.writeUTF(getGameState(1) + "Invalid location!\n" + sPrompt);
                         break;
                     } else {
                     	currStart = reply;
@@ -449,7 +449,7 @@ class Scribble implements Runnable {
                         }
                     }
                     if (!formatCorrect) {
-                        spOut.writeUTF("Invalid Location!\n" + sPrompt);
+                        spOut.writeUTF("Invalid location!\n" + sPrompt);
                         break;
                     } else {
                     	currStart = reply;
