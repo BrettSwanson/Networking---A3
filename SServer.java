@@ -25,6 +25,7 @@ public class SServer {
     */
     public static void main(String[] args) {
     	try {
+    		seed = 0;
             serverSocket = new ServerSocket(portNumber);
 	        System.out.println("Server started: " + serverSocket);
 
@@ -42,6 +43,7 @@ public class SServer {
 		        out2.writeUTF("Welcome to Scribble!\n\nPlease wait for your opponent...");
 		        
 		        (new Thread( new Scribble(clientSocketOne, clientSocketTwo, seed))).start();
+		        seed++;
 	         }
         } catch (IOException e) {
             System.out.println("Server encountered an error. "
