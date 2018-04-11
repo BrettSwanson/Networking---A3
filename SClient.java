@@ -25,7 +25,6 @@ public class SClient {
       try {
 
           socket = new Socket(hostName, portNumber);
-          System.out.println("Connected to server: " + socket);
           openStreams();
           playGame();
           close();
